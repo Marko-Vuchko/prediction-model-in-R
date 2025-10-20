@@ -1,4 +1,4 @@
-# Library Reading Analysis — Marko_Vučković_Task6
+# Library Reading Analysis
 
 Professional, reproducible analysis of library user behaviour. This repository contains an R script that fits a regression model to predict number of books read from member age and membership duration, builds a simple classifier for "heavy readers", creates visualisations and exports example predictions.
 
