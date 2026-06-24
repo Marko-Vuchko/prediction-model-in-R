@@ -47,7 +47,7 @@ predikcije <- predict(model, newdata = novi_clanovi)
 rezultati <- cbind(novi_clanovi, books_predicted = round(predikcije))
 
 # 4. Eksportujemo rezultate u CSV fajl
-write.csv(rezultati, "Marko_Vučković_Task6_predictions.csv", row.names = FALSE)
+write.csv(rezultati, "predictions.csv", row.names = FALSE)
 
 # Kreiranje grafičkog prikaza regresionog modela
 ggplot(library_books_read, aes(x =  member_age, y = books_read)) +

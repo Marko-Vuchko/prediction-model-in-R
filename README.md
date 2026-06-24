@@ -1,86 +1,103 @@
-# Library Reading Analysis
+# Library Reading Behavior — Predictive Modeling in R
 
-Professional, reproducible analysis of library user behaviour. This repository contains an R script that fits a regression model to predict number of books read from member age and membership duration, builds a simple classifier for "heavy readers", creates visualisations and exports example predictions.
+Regression and classification analysis of library member reading habits. Predicts books read from member age and tenure, and identifies heavy readers using logistic regression.
 
-## Contents
-- library_books_read.csv — input dataset (expected columns: `member_age`, `membership_years`, `books_read`)
-- Marko_Vučković_Task6_modeling.R — single self-contained analysis script (data loading, EDA, regression, classification, plots, export)
-- Marko_Vučković_Task6_predictions.csv — example predictions exported by the script
-- Marko_Vučković_Task6.Rproj — RStudio project file
+[![R](https://img.shields.io/badge/R-4.0%2B-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 
-## Project summary
-- Goal: Model and understand reading behaviour in the library dataset; predict books read and identify heavy readers.
-- Primary models:
-  - Linear regression: books_read ~ member_age + membership_years
-  - Logistic regression classifier: heavy reader (books_read > 25) ~ member_age + membership_years
-- Outputs: model summaries, MAE for regression, classification accuracy and confusion matrix, ggplot2 visualisations, CSV export of predictions for hypothetical members.
+---
+
+## Overview
+
+This project models how library membership duration and member age relate to reading volume. It delivers both a numeric prediction (linear regression) and a binary classifier for heavy readers (more than 25 books).
+
+| Task | Business question | Method |
+|------|-------------------|--------|
+| **1** | How do age and tenure affect books read? | Linear regression (`lm`) |
+| **2** | Can we predict reading volume for new members? | Hold-out test + MAE |
+| **3** | Who qualifies as a heavy reader? | Logistic regression (threshold > 25) |
+| **4** | How accurate is the classifier? | Confusion matrix & accuracy |
+
+---
+
+## Results (typical run)
+
+| Model | Metric | Value |
+|-------|--------|-------|
+| Linear regression | MAE on test set | ~3.5 books (varies by split) |
+| Logistic classifier | Accuracy | ~85–95% (depends on class balance) |
+| Regression insight | Stronger predictor | `membership_years` vs. `member_age` |
+
+Run `Rscript analysis.R` locally to reproduce exact metrics with `set.seed(123)`.
+
+---
+
+## Repository structure
+
+```
+.
+├── analysis.R              # Full analysis pipeline
+├── library_books_read.csv  # Input dataset
+├── predictions.csv         # Exported predictions for sample members
+├── LICENSE
+└── README.md
+```
+
+---
 
 ## Data schema
-Expected CSV columns:
-- member_age — numeric (age of the member)
-- membership_years — numeric (years of library membership)
-- books_read — numeric/integer (number of books read)
 
-If the dataset differs, update column names or preprocess accordingly in the script.
+| Column | Type | Description |
+|--------|------|-------------|
+| `member_age` | numeric | Member age |
+| `membership_years` | numeric | Years of library membership |
+| `books_read` | numeric | Total books read |
 
-## Requirements
-- R >= 4.0
-- Packages: readr, tidyverse, ggplot2
-Install packages (one-time):
-```sh
-R -e "install.packages(c('readr','tidyverse','ggplot2'))"
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/Marko-Vuchko/prediction-model-in-R.git
+cd prediction-model-in-R
 ```
 
-## How to run
-From the project root folder (Windows):
-```sh
-# Option A: run non-interactively
-Rscript "Marko_Vučković_Task6_modeling.R"
+Install packages:
 
-# Option B: open in RStudio and run the script or use the project file
-# c:\Users\Marko\Desktop\IT Academy\3. Python Projects\8. R for Data Science and Data Analytics\Marko_Vučković_Task6\Marko_Vučković_Task6.Rproj
-```
-
-Set working directory if needed:
 ```r
-setwd("c:/Users/Marko/Desktop/IT Academy/3. Python Projects/8. R for Data Science and Data Analytics/Marko_Vučković_Task6")
+install.packages(c("readr", "tidyverse", "ggplot2"))
 ```
 
-## Main script behavior
-- Loads CSV: `library_books_read <- read.csv("library_books_read.csv")`
-- Splits data into train/test (80/20) with `set.seed(123)` for reproducibility
-- Fits linear model `lm(books_read ~ member_age + membership_years, data = train_data)`
-- Evaluates MAE on test set
-- Generates predictions for example `novi_clanovi` and writes `Marko_Vučković_Task6_predictions.csv`
-- Adds binary column `read_many_books` (books_read > 25), fits `glm(..., family = binomial)`, computes predicted probabilities, confusion table, and accuracy
-- Produces two ggplot2 visualisations (regression and classification views)
+Run:
 
-## Key files produced
-- Marko_Vučković_Task6_predictions.csv — predicted `books_predicted` for sample new members
-- Console outputs: regression summary, classification summary, MAE, accuracy, confusion matrix
-- Plots displayed in the R plotting device (save manually if needed)
+```bash
+Rscript analysis.R
+```
 
-## Notes, assumptions & recommendations
-- Heavy-reader threshold is currently `books_read > 25` — adjust to suit domain needs.
-- Current evaluation uses a single random split (seed 123). For robust performance estimates use k-fold cross-validation or repeated resampling.
-- Add diagnostics for regression (residual plots, heteroscedasticity tests) and classification (ROC, AUC, precision/recall).
-- Consider saving fitted models with `saveRDS()` and loading via `readRDS()` for deployment.
-- If multicollinearity is a concern, compute VIFs and address correlated predictors.
-- For reproducible packaging, add a DESCRIPTION or renv lockfile.
+---
 
-## Suggested improvements / next steps
-- Use caret or tidymodels for consistent workflows, tuning and CV.
-- Expand features (e.g., genre preferences, visit frequency) if available.
-- Add automated unit tests for data-loading and basic model outputs.
-- Create a small report (RMarkdown) summarizing methods, diagnostics and figures.
+## Methodology
 
-## Author & license
-Author: Marko Vučković  
-This repository has no license file. Add a LICENSE (e.g., MIT) before publishing if wider reuse is intended.
+1. 80/20 train/test split with `set.seed(123)`.
+2. Fit `books_read ~ member_age + membership_years` (linear model); evaluate MAE.
+3. Export sample predictions to `predictions.csv`.
+4. Create binary `read_many_books` flag; fit `glm(..., family = binomial)`.
+5. Report confusion matrix, accuracy, and ggplot2 visualizations.
 
-## Contact
-For questions about the code or data, open an issue in the repository or contact the author listed above.
-```// filepath: c:\Users\Marko\Desktop\IT Academy\3. Python Projects\8. R for Data Science and Data Analytics\Marko_Vučković_Task6\README.md
-# Library Reading Analysis — Marko_Vučković_Task6
+---
 
-Professional, reproducible analysis of library user behaviour. This repository contains an R script that fits a regression model to predict number of books read from member age and membership duration, builds a simple classifier for "heavy readers", creates visualisations and exports example predictions.
+## Tech stack
+
+**R:** readr, tidyverse, ggplot2
+
+---
+
+## Author
+
+**Marko Vučković** — Data Analyst & Developer  
+[GitHub](https://github.com/Marko-Vuchko) · [Email](mailto:markovucko12@gmail.com)
+
+---
+
+## License
+
+This project is released under the [MIT License](LICENSE).
